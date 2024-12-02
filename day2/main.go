@@ -11,6 +11,7 @@ import (
 
 func main() {
 	part1()
+	part2()
 }
 
 func part1() {
@@ -25,6 +26,30 @@ func part1() {
 		}
 	}
 	fmt.Println("Part 1 -", counter)
+}
+
+func part2() {
+	reports, err := readNumbersFromFile("day2/input.txt")
+	if err != nil {
+		panic(err)
+	}
+	counter := 0
+	for _, report := range reports {
+		if dist := maxAdjacentDistance(report); isMonotonic(report) && dist >= 1 && dist <= 3 {
+			counter++
+		} else {
+			for i := range report {
+				copyReport := make([]int, len(report))
+				copy(copyReport, report)
+				dampened := append(copyReport[:i], copyReport[i+1:]...)
+				if dist := maxAdjacentDistance(dampened); isMonotonic(dampened) && dist >= 1 && dist <= 3 {
+					counter++
+					break
+				}
+			}
+		}
+	}
+	fmt.Println("Part 2 -", counter)
 }
 
 func maxAdjacentDistance(nums []int) int {
